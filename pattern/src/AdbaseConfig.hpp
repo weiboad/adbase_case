@@ -66,6 +66,8 @@ typedef struct adbaseConfig {
 	int mcPort;
 	std::string mcServerName;
 	int mcThreadNum;
+
+    std::unordered_map<std::string, std::string> patternConfig;
 } AdbaseConfig;
 
 class App;

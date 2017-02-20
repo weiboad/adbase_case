@@ -74,8 +74,13 @@ void App::setTimerContext(TimerContext* context) {
 //{{{ void App::loadConfig()
 
 void App::loadConfig(adbase::IniConfig& config) {
-	(void)config;
-	
+    // 解析词库配置
+    std::vector<std::string> patternKeys  = config.Options("pattern");
+    std::unordered_map<std::string, std::string> patternConfig; 
+    for (auto & t : patternKeys) {
+        patternConfig[t] = config.GetOption("pattern", t);
+    }
+    _configure->patternConfig = patternConfig;
 }
 
 //}}}
