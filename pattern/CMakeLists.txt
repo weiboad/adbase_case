@@ -1,0 +1,3 @@
+PROJECT(pattern)
+ADD_SUBDIRECTORY(src bin)
+INSTALL(DIRECTORY conf DESTINATION adinf/pattern PATTERN ".git" EXCLUDE)
