@@ -3,6 +3,7 @@
 
 #include <adbase/Config.hpp>
 #include "AdbaseConfig.hpp"
+#include "app/PatternManager.hpp"
 
 class App {
 public:
@@ -19,6 +20,7 @@ public:
 private:
 	AdbaseConfig* _configure;
 	mutable std::mutex _mut;
+    app::PatternManager* _patternManager;
 };
 
 #endif

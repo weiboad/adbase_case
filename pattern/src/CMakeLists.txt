@@ -1,5 +1,5 @@
 INCLUDE_DIRECTORIES(./)
-INCLUDE_DIRECTORIES(./thridpart)
+INCLUDE_DIRECTORIES(./thirdparty)
 LINK_DIRECTORIES(/usr/local/lib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -W -static-libstdc++")  
 
@@ -30,6 +30,8 @@ SET(PATTERN_SRC pattern.cpp
 	McProcessor.cpp
 	HeadProcessor.cpp
 	Timer.cpp
+    app/WuManber.cpp
+    app/PatternManager.cpp
 )
 ADD_EXECUTABLE(pattern ${PATTERN_SRC})
 TARGET_LINK_LIBRARIES(pattern libadbase.a 

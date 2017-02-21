@@ -1,0 +1,3 @@
+[submodule "pattern/src/thirdparty/rapidjson"]
+	path = pattern/src/thirdparty/rapidjson
+	url = https://github.com/miloyip/rapidjson.git

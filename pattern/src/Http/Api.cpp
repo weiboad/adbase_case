@@ -24,5 +24,13 @@ void Api::index(adbase::http::Request* request, adbase::http::Response* response
 }
 
 // }}}
+// {{{ void Api::pattern()
+
+void Api::pattern(adbase::http::Request* request, adbase::http::Response* response, void*) {
+	(void)request;
+	responseJson(response, "{\"msg\": \"hello adinf\"}", 0, "");
+}
+
+// }}}
 }
 }

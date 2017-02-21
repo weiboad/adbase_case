@@ -42,6 +42,7 @@ App::~App() {
 // {{{ void App::run()
 
 void App::run() {
+    _patternManager = new app::PatternManager(_configure);
 }
 
 // }}}
@@ -54,6 +55,10 @@ void App::reload() {
 // {{{ void App::stop()
 
 void App::stop() {
+    if (_patternManager != nullptr) {
+        delete _patternManager;
+        _patternManager = nullptr;
+    }
 }
 
 // }}}
@@ -61,6 +66,7 @@ void App::stop() {
 
 void App::setAdServerContext(AdServerContext* context) {
 	context->app = this;
+    context->patternManager = _patternManager;
 }
 
 // }}}
@@ -75,10 +81,10 @@ void App::setTimerContext(TimerContext* context) {
 
 void App::loadConfig(adbase::IniConfig& config) {
     // 解析词库配置
-    std::vector<std::string> patternKeys  = config.Options("pattern");
+    std::vector<std::string> patternKeys  = config.options("pattern");
     std::unordered_map<std::string, std::string> patternConfig; 
     for (auto & t : patternKeys) {
-        patternConfig[t] = config.GetOption("pattern", t);
+        patternConfig[t] = config.getOption("pattern", t);
     }
     _configure->patternConfig = patternConfig;
 }

@@ -71,12 +71,16 @@ typedef struct adbaseConfig {
 } AdbaseConfig;
 
 class App;
+namespace app {
+class PatternManager;
+}
 typedef struct adserverContext {
 	AdbaseConfig* config;
 	adbase::EventBasePtr mainEventBase;	
 	App* app;
 	adbase::metrics::Metrics* metrics;
 	// 前后端交互数据指针添加到下面
+    app::PatternManager* patternManager;
 } AdServerContext;
 
 typedef struct timerContext {
