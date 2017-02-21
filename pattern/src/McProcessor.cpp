@@ -1,5 +1,7 @@
 #include "McProcessor.hpp"
 #include "App.hpp"
+#include <set>
+#include "app/Json.hpp"
 
 // {{{ McProcessor::McProcessor()
 
@@ -101,8 +103,70 @@ adbase::mc::ProtocolBinaryResponseStatus McProcessor::get(const void* key,
 			uint16_t keylen,
 			adbase::Buffer *data) {
 	std::string keyData(static_cast<const char*>(key), static_cast<size_t>(keylen));
-	data->append(static_cast<const char*>(key), static_cast<size_t>(keylen));
-	LOG_INFO << "Mc GET key:" << keyData;
+    rapidjson::Document documentData;
+
+    // base64 decode
+    char decodeData[static_cast<size_t>(keylen)];
+    memset(decodeData, 0, static_cast<size_t>(keylen));
+    int length = 0;
+    adbase::base64Decode(decodeData, &length, keyData);
+
+    documentData.Parse(decodeData);
+    if (documentData.HasParseError()) {
+        return adbase::mc::PROTOCOL_BINARY_RESPONSE_KEY_ENOENT;
+    }
+
+    if (!documentData.IsObject()) {
+        std::string error = "pattern format is invalid.";
+        LOG_ERROR << error;
+        return adbase::mc::PROTOCOL_BINARY_RESPONSE_KEY_ENOENT;
+    }
+
+    if (!documentData.HasMember("dict") || !documentData.HasMember("contents")) {
+        std::string error = "pattern format is invalid.";
+        LOG_ERROR << error;
+        return adbase::mc::PROTOCOL_BINARY_RESPONSE_KEY_ENOENT;
+    }
+
+    rapidjson::Value& contents = documentData["contents"];
+    if (!contents.IsArray() || !static_cast<uint32_t>(contents.Size())) {
+        std::string error = " contents not is array or empty.";
+        LOG_ERROR << error;
+        return adbase::mc::PROTOCOL_BINARY_RESPONSE_KEY_ENOENT;
+    }
+
+    std::string patternType = documentData["dict"].GetString();
+
+    rapidjson::Document document;
+    rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+    rapidjson::Value result(rapidjson::kArrayType);
+    for (int i = 0; i < static_cast<int>(contents.Size()); i++) {
+        if (!contents[i].IsString()) {
+            continue;
+        }
+
+        rapidjson::Value item(rapidjson::kObjectType);
+        std::set<std::string> patternResult;
+        std::string text = std::string(contents[i].GetString());
+        LOG_INFO << "Pattern type: `" << patternType << "` text: " << text;
+        int hit = _context->patternManager->search(patternType, text, patternResult);
+
+        rapidjson::Value patterns(rapidjson::kArrayType);
+        for (auto &t : patternResult) {
+            rapidjson::Value messageValue;
+            messageValue.SetString(t.c_str(), static_cast<unsigned int>(t.size()), allocator);
+            patterns.PushBack(messageValue, allocator);
+        }
+        item.AddMember("hit", hit, allocator);
+        item.AddMember("patterns", patterns, allocator);
+        result.PushBack(item, allocator);
+    }
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    result.Accept(writer);
+
+	data->append(static_cast<const char*>(buffer.GetString()), static_cast<size_t>(buffer.GetSize()));
 	return adbase::mc::PROTOCOL_BINARY_RESPONSE_SUCCESS;
 }
 

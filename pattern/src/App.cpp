@@ -43,6 +43,7 @@ App::~App() {
 
 void App::run() {
     _patternManager = new app::PatternManager(_configure);
+    _patternManager->init();
 }
 
 // }}}

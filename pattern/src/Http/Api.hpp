@@ -10,6 +10,7 @@ public:
 	Api(AdServerContext* context);
 	void registerLocation(adbase::http::Server* http);
 	void index(adbase::http::Request* request, adbase::http::Response* response, void*);
+	void pattern(adbase::http::Request* request, adbase::http::Response* response, void*);
 };
 }
 }

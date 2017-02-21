@@ -1,5 +1,6 @@
 INCLUDE_DIRECTORIES(./)
 INCLUDE_DIRECTORIES(./thirdparty)
+INCLUDE_DIRECTORIES(./thirdparty/rapidjson/include)
 LINK_DIRECTORIES(/usr/local/lib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -W -static-libstdc++")  
 

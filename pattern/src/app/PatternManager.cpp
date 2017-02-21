@@ -46,6 +46,7 @@ void PatternManager::init() {
         WuManber* wumanber = new WuManber;
         wumanber->init(patterns);
         _wuManbers[t.first] = wumanber; 
+        LOG_INFO << "Init dict " << t.first << " complete.";
     }
 }
 
